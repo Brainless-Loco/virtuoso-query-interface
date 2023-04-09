@@ -9,7 +9,7 @@ module.exports = class SparqlClient {
     }
 
     async query(sparql) {
-        // Build the request handler
+        
         const handler = axios.create({
             baseURL: this.endpoint,
             auth: {

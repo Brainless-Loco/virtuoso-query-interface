@@ -40,7 +40,7 @@ export default function Home() {
   ]);
   const [responseTime, setResponseTime] = useState(null);
 
-  const handleClose = () => {setOpen(false);};
+  const handleClose = () => {setOpen(false);}
   const handleOpen = ()=>{setOpen(true)}
 
   // start here
@@ -55,13 +55,10 @@ export default function Home() {
     if(loading) return
 
     setLoading(true)
-
-    const sparql = `select distinct ?Concept where {[] a ?Concept} LIMIT 100`
-
-    // Request the api here
+    
     const response = await axios.get('/api/execute_query', {
       params: {
-        query: encodeURI(sparql)
+        query: encodeURI(sparqlCode)
       }
     })
 
