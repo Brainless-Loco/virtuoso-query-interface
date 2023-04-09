@@ -10,7 +10,7 @@ import { Modal } from '@mui/material';
 
 
 import {useEffect, useState} from 'react';
-import getIPV4 from './api/LocalIP';
+import axios from 'axios';
 
 
 
@@ -49,26 +49,29 @@ export default function Home() {
   
   const url = "http://localhost:8890/sparql?query=PREFIX+qb:+%3Chttp:%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0A++PREFIX+qb4o:+%3Chttp:%2F%2Fpurl.org%2Fqb4olap%2Fcubes%23%3E%0A++PREFIX+skos:+%3Chttp:%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0A++SELECT+%3FagriGeographyDim_District+(MAX(%3Chttp:%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23float%3E(%3Fm1))+as+%3Farea_max)+%0A++WHERE+%7B%0A++%3Fo+a+qb:Observation+.%0A++%3Fo+qb:dataSet+%3Chttp:%2F%2Fwww.linked-agriculture-bd.com%2Fdata%23agricultureForestryDataset%3E+.%0A++%3Fo+%3Chttp:%2F%2Fwww.linked-agriculture-bd.com%2FmdProperty%23area%3E+%3Fm1+.%0A++%3Fo+%3Chttp:%2F%2Fwww.linked-agriculture-bd.com%2FmdProperty%23District%3E+%3FagriGeographyDim_District+.%0A++%7D%0A++GROUP+BY+%3FagriGeographyDim_District%0A++ORDER+BY+%3FagriGeographyDim_District&format=application%2Fsparql-results%2Bjson&namedGraph=http:%2F%2Flocalhost:8890%2FaggriculturalLinkedData";
   
-  
-  const axios = require('axios')
+  // Set a loading state
+  const [loading, setLoading] = useState(false)
+  const executeQuery = async () => {
+    if(loading) return
 
-  axios.get(`http://192.168.0.112/sparql-auth?query=' + ${encodeURIComponent(sparqlCode)}`,{
-    auth: {  // This is provided by axios, to perform an HTTP Basic auth
-        username: 'dba',
-        password: 'dba'
-    },
+    setLoading(true)
+
+    const sparql = `select distinct ?Concept where {[] a ?Concept} LIMIT 100`
+
+    // Request the api here
+    const response = await axios.get('/api/execute_query', {
+      params: {
+        query: encodeURI(sparql)
+      }
     })
-    .then((response) => {
-        console.log(response);
-    })
-    .catch((error) => {
-        console.log(error);
-    });
 
-  // console.log(getIPV4())
+    console.log('Axios response', response)
 
-
-  //end here
+    setLoading(false)
+  }
+  useEffect(() => {
+    executeQuery()
+  }, [])
 
   return (
     <>
