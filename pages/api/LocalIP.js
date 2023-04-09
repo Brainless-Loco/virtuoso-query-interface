@@ -17,10 +17,11 @@ const getIPV4 = () => {
             }
         }
     }
+    let x;
+    if(results && results['Wi-Fi'])  x = results['Wi-Fi']
+    console.log(x)
 
-    console.log(results['Wi-Fi'][0])
-
-    return results['Wi-Fi'][0]
+    return x
 }
 
 export default getIPV4

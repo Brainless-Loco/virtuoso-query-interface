@@ -52,20 +52,20 @@ export default function Home() {
   
   const axios = require('axios')
 
-  // axios.get(`http://${getIPV4()}/sparql-auth?query=' + ${encodeURIComponent(sparqlCode)}`,{
-  //   auth: {  // This is provided by axios, to perform an HTTP Basic auth
-  //       username: 'dba',
-  //       password: 'dba'
-  //   },
-  //   })
-  //   .then((response) => {
-  //       console.log(response);
-  //   })
-  //   .catch((error) => {
-  //       console.log(error);
-  //   });
+  axios.get(`http://192.168.0.112/sparql-auth?query=' + ${encodeURIComponent(sparqlCode)}`,{
+    auth: {  // This is provided by axios, to perform an HTTP Basic auth
+        username: 'dba',
+        password: 'dba'
+    },
+    })
+    .then((response) => {
+        console.log(response);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
 
-  console.log(getIPV4())
+  // console.log(getIPV4())
 
 
   //end here
