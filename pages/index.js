@@ -7,68 +7,75 @@ import Editor from '@monaco-editor/react';
 import Button from '@mui/material/Button';
 import { DataGrid } from '@mui/x-data-grid';
 import { Modal } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 
-
-import {useEffect, useState} from 'react';
+import {useState,useEffect} from 'react';
 import axios from 'axios';
 
+import {setResponseTime, updateHandleOpenStatus, updateLoadingTStatus } from '@/redux/actions/Actions';
 
 
 export default function Home() {
 
-  const [sparqlCode, setSparqlCode] = useState(`PREFIX qb: <http://purl.org/linked-data/cube#>
-  PREFIX qb4o: <http://purl.org/qb4olap/cubes#>
-  PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-  SELECT ?agriGeographyDim_District (MAX(<http://www.w3.org/2001/XMLSchema#float>(?m1)) as ?area_max) 
-  WHERE {
-  ?o a qb:Observation .
-  ?o qb:dataSet <http://www.linked-agriculture-bd.com/data#agricultureForestryDataset> .
-  ?o <http://www.linked-agriculture-bd.com/mdProperty#area> ?m1 .
-  ?o <http://www.linked-agriculture-bd.com/mdProperty#District> ?agriGeographyDim_District .
-  }
-  GROUP BY ?agriGeographyDim_District
-  ORDER BY ?agriGeographyDim_District`);
+  const dispach = useDispatch()
 
-  // const [data, setData] = useState([]);
+  //states
+  const sparqlCode = useSelector(state=>state.sparqlCode)
+  const modalOpenStatus = useSelector(state=>state.handleOpenStatus)
+  const loading = useSelector(state=>state.loading)
+  const responseTime = useSelector(state=>state.responseTime)
 
-  const [open, setOpen] = useState(false);
-  const [rows, setRows] = useState([]);
-  const [columns, setColumns] = useState([
-    { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'name', headerName: 'Name', width: 200 },
-    { field: 'age', headerName: 'Age', width: 100 },
-  ]);
-  const [responseTime, setResponseTime] = useState(null);
+  const [rows, setRows] = useState([])
+  const [columns, setColumns] = useState([])
 
-  const handleClose = () => {setOpen(false);}
-  const handleOpen = ()=>{setOpen(true)}
 
-  // start here
-  const endpointUrl = 'http://localhost:8890/sparql'; // Replace with your Virtuoso SPARQL endpoint URL
-  const graphIRI = 'http://localhost:8890/aggriculturalLinkedData'; // Replace with the IRI of your Virtuoso graph
+  //actions
+  const updateLoadingStatus = (val)=>dispach(updateLoadingTStatus())
+  const updateModalStatus = ()=>dispach(updateHandleOpenStatus())
+  const updateResponseTime = (time)=>dispach(setResponseTime(time))
   
-  const url = "http://localhost:8890/sparql?query=PREFIX+qb:+%3Chttp:%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0A++PREFIX+qb4o:+%3Chttp:%2F%2Fpurl.org%2Fqb4olap%2Fcubes%23%3E%0A++PREFIX+skos:+%3Chttp:%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0A++SELECT+%3FagriGeographyDim_District+(MAX(%3Chttp:%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23float%3E(%3Fm1))+as+%3Farea_max)+%0A++WHERE+%7B%0A++%3Fo+a+qb:Observation+.%0A++%3Fo+qb:dataSet+%3Chttp:%2F%2Fwww.linked-agriculture-bd.com%2Fdata%23agricultureForestryDataset%3E+.%0A++%3Fo+%3Chttp:%2F%2Fwww.linked-agriculture-bd.com%2FmdProperty%23area%3E+%3Fm1+.%0A++%3Fo+%3Chttp:%2F%2Fwww.linked-agriculture-bd.com%2FmdProperty%23District%3E+%3FagriGeographyDim_District+.%0A++%7D%0A++GROUP+BY+%3FagriGeographyDim_District%0A++ORDER+BY+%3FagriGeographyDim_District&format=application%2Fsparql-results%2Bjson&namedGraph=http:%2F%2Flocalhost:8890%2FaggriculturalLinkedData";
-  
-  // Set a loading state
-  const [loading, setLoading] = useState(false)
+
   const executeQuery = async () => {
     if(loading) return
-
-    setLoading(true)
+    updateModalStatus()
+    updateLoadingStatus()
     
+    const start = Date.now();
     const response = await axios.get('/api/execute_query', {
       params: {
         query: encodeURI(sparqlCode)
       }
     })
+    const end = Date.now();
+    const resTime = end - start;
+    updateResponseTime(resTime)
+
+    const cols = response.data.data.head.vars
+    const bindings = response.data.data.results.bindings
+    
+    // // Process the columns
+    const tempCols = [{field: 'id', headerName: 'ID',  minWidth: 100,flex:0.3}]
+    cols.map(item => {
+      tempCols.push({field: item, headerName: item,  minWidth: 330, flex: 1})
+    });
+    setColumns(tempCols)
+
+    // // Process the Rows
+    const tempRows = []
+    bindings.map((item, idx) => {
+        let obj = {id: idx}
+        tempCols.map((c, index) => {
+            if(index>0)
+              obj = {...obj, [c.field]: item[c.field].value}
+        })
+        tempRows.push(obj)
+    });
+    
+    setRows(tempRows)
 
     console.log('Axios response', response)
-
-    setLoading(false)
+    updateLoadingStatus()
   }
-  useEffect(() => {
-    executeQuery()
-  }, [])
 
   return (
     <>
@@ -94,20 +101,20 @@ export default function Home() {
               background: "white",
               color:'#0d4d15'
             },
-        }}
-        onClick={handleOpen}
-        
-        >Run Query</Button>
+          }}
+          onClick={executeQuery}
+          
+          >Run Query</Button>
 
-
-      <Modal open={open} onClose={handleClose} sx={{display:'flex',alignItems:'center',justifyContent:'center'}}>
+      
+       <Modal open={modalOpenStatus} onClose={updateModalStatus} sx={{display:'flex',alignItems:'center',justifyContent:'center'}}>
         <div style={{ width: '95vw', height: '95vh', backgroundColor: 'white', margin: 'auto', padding: '10px', borderRadius: '5px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',overflow:'auto' }}>
           <h3 style={{marginBottom:'10px'}}>Query Result ({responseTime ? `${responseTime} ms` : '-'})</h3>
           <div style={{ height: '80vh', width: '100%' }}>
-            <DataGrid rows={rows} columns={columns} pageSize={10} />
+            <DataGrid rows={rows} columns={columns} disableSelectionOnClick showColumnVerticalBorder showCellVerticalBorder/>
           </div>
           <Box sx={{display:'flex',justifyContent:'center'}}>
-            <Button variant="contained" color="primary" onClick={handleClose} style={{marginTop: '7px' }}>
+            <Button variant="contained" color="primary" onClick={updateModalStatus} style={{marginTop: '7px' }}>
               Close
             </Button>
           </Box>
