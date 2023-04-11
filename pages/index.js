@@ -8,11 +8,10 @@ import Button from '@mui/material/Button';
 import { DataGrid } from '@mui/x-data-grid';
 import { Modal } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-
-import {useState,useEffect} from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 
-import {setResponseTime, updateHandleOpenStatus, updateLoadingTStatus } from '@/redux/actions/Actions';
+import {setColumn, setResponseTime, setRows, updateHandleOpenStatus, updateLoadingTStatus } from '@/redux/actions/Actions';
 
 
 export default function Home() {
@@ -24,15 +23,15 @@ export default function Home() {
   const modalOpenStatus = useSelector(state=>state.handleOpenStatus)
   const loading = useSelector(state=>state.loading)
   const responseTime = useSelector(state=>state.responseTime)
-
-  const [rows, setRows] = useState([])
-  const [columns, setColumns] = useState([])
-
+  const rows = useSelector(state=>state.rows)
+  const columns = useSelector(state=>state.columns)
 
   //actions
-  const updateLoadingStatus = (val)=>dispach(updateLoadingTStatus())
+  const updateLoadingStatus = ()=>dispach(updateLoadingTStatus())
   const updateModalStatus = ()=>dispach(updateHandleOpenStatus())
   const updateResponseTime = (time)=>dispach(setResponseTime(time))
+  const updateRows = (rows)=> dispach(setRows(rows))
+  const updateColumns = (columns)=> dispach(setColumn(columns))
   
 
   const executeQuery = async () => {
@@ -58,7 +57,7 @@ export default function Home() {
     cols.map(item => {
       tempCols.push({field: item, headerName: item,  minWidth: 330, flex: 1})
     });
-    setColumns(tempCols)
+    updateColumns(tempCols)
 
     // // Process the Rows
     const tempRows = []
@@ -71,7 +70,7 @@ export default function Home() {
         tempRows.push(obj)
     });
     
-    setRows(tempRows)
+    updateRows(tempRows)
 
     console.log('Axios response', response)
     updateLoadingStatus()
@@ -86,7 +85,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-          <Menubar/>
+          <Menubar title="Virtuoso Query Interface"/>
           <QueryListDropDown/>
           
           <Box sx={{border:'1px solid #c2c4c2',height:'70vh',borderRadius:'8px',overflow:'hidden',marginX:'8px'}}>
@@ -111,7 +110,12 @@ export default function Home() {
         <div style={{ width: '95vw', height: '95vh', backgroundColor: 'white', margin: 'auto', padding: '10px', borderRadius: '5px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',overflow:'auto' }}>
           <h3 style={{marginBottom:'10px'}}>Query Result ({responseTime ? `${responseTime} ms` : '-'})</h3>
           <div style={{ height: '80vh', width: '100%' }}>
-            <DataGrid rows={rows} columns={columns} disableSelectionOnClick showColumnVerticalBorder showCellVerticalBorder/>
+            {loading? <Box sx={{ display: 'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',height:'100%' }}>
+                  <h2>Generating the Query Results</h2><br/>
+                  <CircularProgress />
+                </Box>:
+                <DataGrid rows={rows} columns={columns} disableSelectionOnClick showColumnVerticalBorder showCellVerticalBorder/>
+                }
           </div>
           <Box sx={{display:'flex',justifyContent:'center'}}>
             <Button variant="contained" color="primary" onClick={updateModalStatus} style={{marginTop: '7px' }}>
