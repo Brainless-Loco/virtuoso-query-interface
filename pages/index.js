@@ -37,7 +37,6 @@ export default function Home() {
   const updateRows = (rows)=> dispach(setRows(rows))
   const updateColumns = (columns)=> dispach(setColumn(columns))
   const updateSelectedQuery = (queryName) => dispach(updateSelectedQuery(queryName))
-  const updateAllSavedQueryList = (list)=> dispach(updateSavedQueryList(list))
   
 
   const executeQuery = async () => {
@@ -79,18 +78,18 @@ export default function Home() {
     updateRows(tempRows)
     updateLoadingStatus()
   }
-  
-  // Firebase Works
-  const dbInstances = collection(database, 'savedQueries');
-  
+
   useEffect(() => {
+    const dbInstances = collection(database, 'savedQueries');
+    
+    const UpdateAllSavedQueryList = (list)=> useDispatch(updateSavedQueryList(list))
     const GetQueries = ()=>{
       getDocs(dbInstances)
       .then((data) => {
           const queriesArray = data.docs.map((item) => {
               return { ...item.data(), id: item.id }
           });
-          updateAllSavedQueryList(queriesArray)
+          UpdateAllSavedQueryList(queriesArray)
       })
     }
     GetQueries()
