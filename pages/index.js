@@ -82,16 +82,17 @@ export default function Home() {
   
   // Firebase Works
   const dbInstances = collection(database, 'savedQueries');
-  const GetQueries = ()=>{
-    getDocs(dbInstances)
-    .then((data) => {
-        const queriesArray = data.docs.map((item) => {
-            return { ...item.data(), id: item.id }
-        });
-        updateAllSavedQueryList(queriesArray)
-    })
-  }
+  
   useEffect(() => {
+    const GetQueries = ()=>{
+      getDocs(dbInstances)
+      .then((data) => {
+          const queriesArray = data.docs.map((item) => {
+              return { ...item.data(), id: item.id }
+          });
+          updateAllSavedQueryList(queriesArray)
+      })
+    }
     GetQueries()
   }, [])
 
