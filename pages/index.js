@@ -82,7 +82,7 @@ export default function Home() {
   
   // Firebase Works
   const dbInstances = collection(database, 'savedQueries');
-  const getQueries = ()=>{
+  const GetQueries = ()=>{
     getDocs(dbInstances)
     .then((data) => {
         const queriesArray = data.docs.map((item) => {
@@ -92,7 +92,7 @@ export default function Home() {
     })
   }
   useEffect(() => {
-    getQueries()
+    GetQueries()
   }, [])
 
   return (
