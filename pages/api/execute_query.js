@@ -3,8 +3,6 @@ import SparqlClient from "./sparql_client/SparqlClient"
 const handler = async (req, res) => {
     const { query } = req.query
     let q = decodeURIComponent(query)
-    console.log(q)
-    
     const client = new SparqlClient()
     const result = await client.query(q)
 

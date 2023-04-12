@@ -18,8 +18,6 @@ const getIPV4 = () => {
         }
     }
 
-    //console.log(results)
-
     return results['Wi-Fi'][0]
 }
 

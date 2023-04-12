@@ -37,6 +37,7 @@ export default function Home() {
   const updateRows = (rows)=> dispach(setRows(rows))
   const updateColumns = (columns)=> dispach(setColumn(columns))
   const updateSelectedQuery = (queryName) => dispach(updateSelectedQuery(queryName))
+  const updateAllSavedQueryList = (list)=> dispach(updateSavedQueryList(list))
   
 
   const executeQuery = async () => {
@@ -58,7 +59,7 @@ export default function Home() {
     const bindings = response.data.data.results.bindings
     
     // // Process the columns
-    const tempCols = [{field: 'id', headerName: 'ID',  minWidth: 100,flex:0.3}]
+    const tempCols = [{field: 'id', headerName: 'ID',  minWidth: 100,flex:0.1}]
     cols.map(item => {
       tempCols.push({field: item, headerName: item,  minWidth: 330, flex: 1})
     });
@@ -78,11 +79,11 @@ export default function Home() {
     updateRows(tempRows)
     updateLoadingStatus()
   }
-
+  
+  // Firebase Works
+  const dbInstances = collection(database, 'savedQueries');
+  
   useEffect(() => {
-    
-    const dbInstances = collection(database, 'savedQueries');
-    
     const GetQueries = ()=>{
       getDocs(dbInstances)
       .then((data) => {
@@ -142,7 +143,7 @@ export default function Home() {
                 }
           </div>
           <Box sx={{display:'flex',justifyContent:'center'}}>
-            <Button variant="contained" color="primary" onClick={updateModalStatus} style={{marginTop: '7px' }}>
+            <Button variant="contained" color="primary" onClick={()=>{ updateResponseTime(0); updateModalStatus()}} style={{marginTop: '7px' }}>
               Close
             </Button>
           </Box>

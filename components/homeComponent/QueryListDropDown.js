@@ -15,9 +15,11 @@ export default function QueryListDropDown() {
 
   const updateSelectedQueryInfo = (name)=>dispatch(updateSelectedQuery(name))
 
-  nameList = nameList.map((item)=>{
-    return item.name
-  })
+  if(nameList.length>0){  
+    nameList = nameList.map((item)=>{
+      return item.name
+    })
+  }
 
   const handleChange = (event)=>{
     const newValue = event.target.value;
@@ -31,12 +33,15 @@ export default function QueryListDropDown() {
         <FormControl sx={{width:'50%',height:'50px',display:'flex',justifyContent:'center'}}>
             <InputLabel id="demo-simple-select-label" sx={{background:'white'}}>Select a Query Type &nbsp;</InputLabel>
             <Select
+                defaultValue="choose"
                 labelId="query-type-selection"
                 id="query-type-select"
                 label="query-type"
                 onChange={handleChange}
             >
+              <MenuItem disabled value="choose">Choose Name</MenuItem>
               {
+                nameList.length>0 &&
                 nameList.map((item)=>{
                   return <MenuItem key={item} value={item}>{item}</MenuItem>
                 })
