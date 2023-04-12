@@ -5,33 +5,39 @@ import Menubar from '@/components/homeComponent/Menubar';
 import QueryListDropDown from '@/components/homeComponent/QueryListDropDown';
 import Editor from '@monaco-editor/react';
 import Button from '@mui/material/Button';
-import { DataGrid } from '@mui/x-data-grid';
-import { Modal } from '@mui/material';
+import DataGrid from '@mui/x-data-grid/DataGrid';
+import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
+import {database} from './firebaseConfig'
+import { collection, getDocs } from 'firebase/firestore/lite';
+import {useEffect} from 'react'
 
-import {setColumn, setResponseTime, setRows, updateHandleOpenStatus, updateLoadingTStatus } from '@/redux/actions/Actions';
+import {setColumn, setResponseTime, setRows, updateHandleOpenStatus, updateLoadingTStatus, updateSavedQueryList } from '@/redux/actions/Actions';
 
 
 export default function Home() {
 
   const dispach = useDispatch()
 
-  //states
+  //Reducer states
   const sparqlCode = useSelector(state=>state.sparqlCode)
   const modalOpenStatus = useSelector(state=>state.handleOpenStatus)
   const loading = useSelector(state=>state.loading)
   const responseTime = useSelector(state=>state.responseTime)
   const rows = useSelector(state=>state.rows)
   const columns = useSelector(state=>state.columns)
+  const selectedQueryNam = useSelector(state=>state.selectedQueryName)
 
-  //actions
+  //Reducer actions
   const updateLoadingStatus = ()=>dispach(updateLoadingTStatus())
   const updateModalStatus = ()=>dispach(updateHandleOpenStatus())
   const updateResponseTime = (time)=>dispach(setResponseTime(time))
   const updateRows = (rows)=> dispach(setRows(rows))
   const updateColumns = (columns)=> dispach(setColumn(columns))
+  const updateSelectedQuery = (queryName) => dispach(updateSelectedQuery(queryName))
+  const updateAllSavedQueryList = (list)=> dispach(updateSavedQueryList(list))
   
 
   const executeQuery = async () => {
@@ -71,10 +77,23 @@ export default function Home() {
     });
     
     updateRows(tempRows)
-
-    console.log('Axios response', response)
     updateLoadingStatus()
   }
+  
+  // Firebase Works
+  const dbInstances = collection(database, 'savedQueries');
+  const getQueries = ()=>{
+    getDocs(dbInstances)
+    .then((data) => {
+        const queriesArray = data.docs.map((item) => {
+            return { ...item.data(), id: item.id }
+        });
+        updateAllSavedQueryList(queriesArray)
+    })
+  }
+  useEffect(() => {
+    getQueries()
+  }, [])
 
   return (
     <>
@@ -89,11 +108,16 @@ export default function Home() {
           <QueryListDropDown/>
           
           <Box sx={{border:'1px solid #c2c4c2',height:'70vh',borderRadius:'8px',overflow:'hidden',marginX:'8px'}}>
-            <Editor
+            {
+              <Editor
                 defaultLanguage="sparql"
-                defaultValue={sparqlCode}/>
+                value={sparqlCode}
+                />
+            }
           </Box>
-          <Button sx={{backgroundColor:'#0d4d15',width:'auto',padding:'14px',margin:'auto',color:'white',borderRadius:'5px',fontWeight:'bold',border:'2px solid transparent',
+          <Button 
+            disabled={selectedQueryNam.length==0}
+            sx={{backgroundColor:'#0d4d15',width:'auto',padding:'14px',margin:'auto',color:'white',borderRadius:'5px',fontWeight:'bold',border:'2px solid transparent',
           '&:hover': 
               {
               border:'2px solid #0d4d15',

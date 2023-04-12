@@ -1,24 +1,19 @@
-import { UPDATE_LOADING_TIME, UPDATE_HANDLE_OPEN_STATE, SET_ROWS, SET_DATA, SET_RESPONSE_TIME, SET_COLUMNS } from "../Types";
+import { UPDATE_LOADING_TIME, UPDATE_HANDLE_OPEN_STATE, SET_ROWS, SET_DATA, SET_RESPONSE_TIME, SET_COLUMNS, UPDATE_SELECTED_QUERY, UPDATE_ALL_SAVED_QUERY_LIST } from "../Types";
 
 const initialState = {
     loading:false,
-    sparqlCode:`PREFIX qb: <http://purl.org/linked-data/cube#>
-    PREFIX qb4o: <http://purl.org/qb4olap/cubes#>
-    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?agriGeographyDim_District (MAX(<http://www.w3.org/2001/XMLSchema#float>(?m1)) as ?area_max) 
-    WHERE {
-    ?o a qb:Observation .
-    ?o qb:dataSet <http://www.linked-agriculture-bd.com/data#agricultureForestryDataset> .
-    ?o <http://www.linked-agriculture-bd.com/mdProperty#area> ?m1 .
-    ?o <http://www.linked-agriculture-bd.com/mdProperty#District> ?agriGeographyDim_District .
-    }
-    GROUP BY ?agriGeographyDim_District
-    ORDER BY ?agriGeographyDim_District`,
+    sparqlCode:`# Please Select a Query Type First
+
+    # You can go to /insertQuery to save your query
+
+        # Your query will be run on aggriculturalLinkedData.ttl file`,
     handleOpenStatus:false,
     data:[],
     rows:[],
     columns:[],
     responseTime:0,
+    queries:[],
+    selectedQueryName: ''
 };
 
 export default (state = initialState, action) => {
@@ -60,6 +55,23 @@ export default (state = initialState, action) => {
                 columns:action.columns
             }
         }
+
+        case UPDATE_SELECTED_QUERY:{
+            var temp = state.queries.filter(query=>query.name===action.queryName)
+            return {
+                ...state,
+                sparqlCode: temp[0].Query,
+                selectedQueryName: temp[0].name
+            }
+        }
+        
+        case UPDATE_ALL_SAVED_QUERY_LIST:{
+            return{
+                ...state,
+                queries:action.list
+            }
+        }
+
 
 
 

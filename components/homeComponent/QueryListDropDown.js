@@ -4,8 +4,28 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Box from '@mui/material/Box';
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { updateSelectedQuery } from '@/redux/actions/Actions';
 
 export default function QueryListDropDown() {
+  
+  const dispatch = useDispatch()
+
+  var nameList = useSelector(state=>state.queries)
+
+  const updateSelectedQueryInfo = (name)=>dispatch(updateSelectedQuery(name))
+
+  nameList = nameList.map((item)=>{
+    return item.name
+  })
+
+  const handleChange = (event)=>{
+    const newValue = event.target.value;
+    updateSelectedQueryInfo(newValue)
+  }
+
+
+
   return (
     <Box sx={{width:'100%',padding:'8px',height:'auto',overflow:'hidden'}}>
         <FormControl sx={{width:'50%',height:'50px',display:'flex',justifyContent:'center'}}>
@@ -14,10 +34,13 @@ export default function QueryListDropDown() {
                 labelId="query-type-selection"
                 id="query-type-select"
                 label="query-type"
+                onChange={handleChange}
             >
-                <MenuItem  value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem> 
-                <MenuItem value={30}>Thirty</MenuItem>
+              {
+                nameList.map((item)=>{
+                  return <MenuItem key={item} value={item}>{item}</MenuItem>
+                })
+              }
             </Select>
         </FormControl>
     </Box>
