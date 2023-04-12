@@ -5,7 +5,7 @@ import Menubar from '@/components/homeComponent/Menubar';
 import QueryListDropDown from '@/components/homeComponent/QueryListDropDown';
 import Editor from '@monaco-editor/react';
 import Button from '@mui/material/Button';
-import DataGrid from '@mui/x-data-grid/DataGrid';
+import {DataGrid} from '@mui/x-data-grid';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
