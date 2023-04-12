@@ -80,16 +80,16 @@ export default function Home() {
   }
 
   useEffect(() => {
+    
     const dbInstances = collection(database, 'savedQueries');
     
-    const UpdateAllSavedQueryList = (list)=> useDispatch(updateSavedQueryList(list))
     const GetQueries = ()=>{
       getDocs(dbInstances)
       .then((data) => {
           const queriesArray = data.docs.map((item) => {
               return { ...item.data(), id: item.id }
           });
-          UpdateAllSavedQueryList(queriesArray)
+          updateAllSavedQueryList(queriesArray)
       })
     }
     GetQueries()
