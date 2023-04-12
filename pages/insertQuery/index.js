@@ -13,7 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { updateLoadingTStatus } from '@/redux/actions/Actions';
 
 
-export default function index() {
+export default function Index() {
 
     const [nameValue, setnameValue] = useState('')
     const [editorValue, seteditorValue] = useState('# Write or Paste you SPARQL Code here')
