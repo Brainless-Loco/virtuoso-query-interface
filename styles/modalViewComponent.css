@@ -1,0 +1,5 @@
+.bold-header, .MuiDataGrid-columnHeaderTitle {
+    font-weight: bold;
+    color:rgb(66, 5, 85);
+    text-align:center;
+}

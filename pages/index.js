@@ -5,16 +5,15 @@ import Menubar from '@/components/Menubar';
 import QueryListDropDown from '@/components/homeComponent/QueryListDropDown';
 import Button from '@mui/material/Button';
 import Editor from '@/components/homeComponent/EditorComponent';
-import {DataGrid} from '@mui/x-data-grid';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import {database} from './firebaseConfig'
 import { collection, getDocs } from 'firebase/firestore/lite';
 import {useEffect} from 'react'
 
 import {setColumn, setResponseTime, setRows, updateHandleOpenStatus, updateLoadingTStatus, updateSavedQueryList } from '@/redux/actions/Actions';
+import ModalViewComponent from '@/components/homeComponent/ModalViewComponent';
 
 
 export default function Home() {
@@ -26,8 +25,6 @@ export default function Home() {
   const modalOpenStatus = useSelector(state=>state.handleOpenStatus)
   const loading = useSelector(state=>state.loading)
   const responseTime = useSelector(state=>state.responseTime)
-  const rows = useSelector(state=>state.rows)
-  const columns = useSelector(state=>state.columns)
   const selectedQueryNam = useSelector(state=>state.selectedQueryName)
 
   //Reducer actions
@@ -108,12 +105,6 @@ export default function Home() {
           <Menubar title="Virtuoso Query Interface"/>
           <QueryListDropDown/>
           <Editor/>
-          {/* <Box sx={{border:'1px solid #c2c4c2',height:'70vh',borderRadius:'8px',overflow:'hidden',marginX:'8px'}}>
-            <Editor
-              defaultLanguage="sparql"
-              value={sparqlCode}
-              />
-          </Box> */}
           <Button 
             disabled={selectedQueryNam.length==0}
             sx={{backgroundColor:'#0d4d15',width:'auto',padding:'14px',margin:'auto',color:'white',borderRadius:'5px',fontWeight:'bold',border:'2px solid transparent',
@@ -132,14 +123,7 @@ export default function Home() {
        <Modal open={modalOpenStatus} onClose={updateModalStatus} sx={{display:'flex',alignItems:'center',justifyContent:'center'}}>
         <div style={{ width: '95vw', height: '95vh', backgroundColor: 'white', margin: 'auto', padding: '10px', borderRadius: '5px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',overflow:'auto' }}>
           <h3 style={{marginBottom:'10px'}}>Query Result ({responseTime ? `${responseTime} ms` : '-'})</h3>
-          <div style={{ height: '80vh', width: '100%' }}>
-            {loading? <Box sx={{ display: 'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',height:'100%' }}>
-                  <h2>Generating the Query Results</h2><br/>
-                  <CircularProgress />
-                </Box>:
-                <DataGrid rows={rows} columns={columns} disableSelectionOnClick showColumnVerticalBorder showCellVerticalBorder/>
-                }
-          </div>
+          <ModalViewComponent/>
           <Box sx={{display:'flex',justifyContent:'center'}}>
             <Button variant="contained" color="primary" onClick={()=>{ updateResponseTime(0); updateModalStatus()}} style={{marginTop: '7px' }}>
               Close
