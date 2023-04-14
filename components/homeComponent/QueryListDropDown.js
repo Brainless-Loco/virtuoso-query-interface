@@ -33,13 +33,12 @@ export default function QueryListDropDown() {
         <FormControl sx={{width:'50%',height:'50px',display:'flex',justifyContent:'center'}}>
             <InputLabel id="demo-simple-select-label" sx={{background:'white'}}>Select a Query Type &nbsp;</InputLabel>
             <Select
-                defaultValue="choose"
                 labelId="query-type-selection"
                 id="query-type-select"
                 label="query-type"
                 onChange={handleChange}
             >
-              <MenuItem disabled value="choose">Choose Name</MenuItem>
+              <MenuItem value="newManualSparql">A New Query</MenuItem>
               {
                 nameList.length>0 &&
                 nameList.map((item)=>{

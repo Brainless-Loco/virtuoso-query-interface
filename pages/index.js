@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import Box from '@mui/material/Box';
-import Menubar from '@/components/homeComponent/Menubar';
+import Menubar from '@/components/Menubar';
 import QueryListDropDown from '@/components/homeComponent/QueryListDropDown';
-import Editor from '@monaco-editor/react';
 import Button from '@mui/material/Button';
+import Editor from '@/components/homeComponent/EditorComponent';
 import {DataGrid} from '@mui/x-data-grid';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -107,15 +107,13 @@ export default function Home() {
       <main className={styles.main}>
           <Menubar title="Virtuoso Query Interface"/>
           <QueryListDropDown/>
-          
-          <Box sx={{border:'1px solid #c2c4c2',height:'70vh',borderRadius:'8px',overflow:'hidden',marginX:'8px'}}>
-            {
-              <Editor
-                defaultLanguage="sparql"
-                value={sparqlCode}
-                />
-            }
-          </Box>
+          <Editor/>
+          {/* <Box sx={{border:'1px solid #c2c4c2',height:'70vh',borderRadius:'8px',overflow:'hidden',marginX:'8px'}}>
+            <Editor
+              defaultLanguage="sparql"
+              value={sparqlCode}
+              />
+          </Box> */}
           <Button 
             disabled={selectedQueryNam.length==0}
             sx={{backgroundColor:'#0d4d15',width:'auto',padding:'14px',margin:'auto',color:'white',borderRadius:'5px',fontWeight:'bold',border:'2px solid transparent',

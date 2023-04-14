@@ -1,4 +1,4 @@
-import { UPDATE_LOADING_TIME, UPDATE_HANDLE_OPEN_STATE, SET_ROWS, SET_DATA, SET_RESPONSE_TIME, SET_COLUMNS, UPDATE_SELECTED_QUERY, UPDATE_ALL_SAVED_QUERY_LIST } from "../Types";
+import { UPDATE_LOADING_TIME, UPDATE_HANDLE_OPEN_STATE, SET_ROWS, SET_DATA, SET_RESPONSE_TIME, SET_COLUMNS, UPDATE_SELECTED_QUERY, UPDATE_ALL_SAVED_QUERY_LIST, UPDATE_SPARQL_WITH_NON_SELECTION_MANUALLY_WRITTEN_CODE, UPDATE_MANUAL_WRITING_STATUS } from "../Types";
 
 const initialState = {
     loading:false,
@@ -13,7 +13,8 @@ const initialState = {
     columns:[],
     responseTime:0,
     queries:[],
-    selectedQueryName: ''
+    selectedQueryName: '',
+    manualWritingState:false
 };
 
 export default (state = initialState, action) => {
@@ -57,11 +58,21 @@ export default (state = initialState, action) => {
         }
 
         case UPDATE_SELECTED_QUERY:{
-            var temp = state.queries.filter(query=>query.name===action.queryName)
+            var temp;
+            if(action.queryName==="newManualSparql") temp =  `# Please Select a Query Type First
+
+            # You can go to /insertQuery to save your query
+        
+                # Your query will be run on aggriculturalLinkedData.ttl file`
+            else {
+                temp = state.queries.filter(query=>query.name===action.queryName)
+                temp = temp[0].Query
+            }
             return {
                 ...state,
-                sparqlCode: temp[0].Query,
-                selectedQueryName: temp[0].name
+                sparqlCode: temp,
+                selectedQueryName: action.queryName,
+                manualWritingState:false
             }
         }
         
@@ -69,6 +80,20 @@ export default (state = initialState, action) => {
             return{
                 ...state,
                 queries:action.list
+            }
+        }
+
+        case UPDATE_SPARQL_WITH_NON_SELECTION_MANUALLY_WRITTEN_CODE:{
+            return{
+                ...state,
+                sparqlCode:action.code
+            }
+        }
+
+        case UPDATE_MANUAL_WRITING_STATUS:{
+            return{
+                ...state,
+                manualWritingState:action.value
             }
         }
 
