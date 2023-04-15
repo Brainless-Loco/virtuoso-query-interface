@@ -24,6 +24,7 @@ export default function EditorComponent() {
                 defaultLanguage="sparql"
                 value={sparqlCode}
                 onChange={editorValueUpdate}
+                disabled
                 />
         </Box>
     )

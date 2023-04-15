@@ -29,7 +29,6 @@ export default function QueryListDropDown() {
 
 
   return (
-    <Box sx={{width:'100%',padding:'8px',height:'auto',overflow:'hidden'}}>
         <FormControl sx={{width:'50%',height:'50px',display:'flex',justifyContent:'center'}}>
             <InputLabel id="demo-simple-select-label" sx={{background:'white'}}>Select a Query Type &nbsp;</InputLabel>
             <Select
@@ -38,15 +37,13 @@ export default function QueryListDropDown() {
                 label="query-type"
                 onChange={handleChange}
             >
-              <MenuItem value="newManualSparql">A New Query</MenuItem>
+              <MenuItem value={"newManualSparql"} key={"newManualSparql"}>A New Query</MenuItem>
               {
-                nameList.length>0 &&
                 nameList.map((item)=>{
                   return <MenuItem key={item} value={item}>{item}</MenuItem>
                 })
               }
             </Select>
         </FormControl>
-    </Box>
   )
 }

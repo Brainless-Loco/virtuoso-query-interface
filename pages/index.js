@@ -12,7 +12,7 @@ import {database} from './firebaseConfig'
 import { collection, getDocs } from 'firebase/firestore/lite';
 import {useEffect} from 'react'
 
-import {setColumn, setResponseTime, setRows, updateHandleOpenStatus, updateLoadingTStatus, updateSavedQueryList } from '@/redux/actions/Actions';
+import {setColumn, setResponseTime, setRows, updateHandleOpenStatus, updateLoadingTStatus, updateSavedQueryList, updateTheManualSparqlCode } from '@/redux/actions/Actions';
 import ModalViewComponent from '@/components/homeComponent/ModalViewComponent';
 
 
@@ -35,6 +35,7 @@ export default function Home() {
   const updateColumns = (columns)=> dispach(setColumn(columns))
   const updateSelectedQuery = (queryName) => dispach(updateSelectedQuery(queryName))
   const updateAllSavedQueryList = (list)=> dispach(updateSavedQueryList(list))
+  const updateSparqlCodeFromClipboard = (code)=>dispach(updateTheManualSparqlCode(code))
   
 
   const executeQuery = async () => {
@@ -93,6 +94,35 @@ export default function Home() {
     GetQueries()
   }, [])
 
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(sparqlCode);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  }
+
+  const pasteCode = async () => {
+    try {
+      const newCode = await navigator.clipboard.readText()
+      updateSparqlCodeFromClipboard(newCode)
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  }
+
+
+  const buttonClasss = {
+    backgroundColor:'#1d274f',color:'white',marginLeft:'40px',borderRadius:'5px',overflow:'hidden',paddingX:'25px',
+    border:'2px solid transparent',fontWeight:'400',
+    '&:hover': 
+      {
+      border:'2px solid #0d4d15',
+      background: "white",
+      color:'#0d4d15'
+    }
+  }
+
   return (
     <>
       <Head>
@@ -103,7 +133,15 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
           <Menubar title="Virtuoso Query Interface"/>
-          <QueryListDropDown/>
+          <Box sx={{width:'100%',padding:'8px',height:'auto',overflow:'hidden',display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
+            
+            <QueryListDropDown/>
+            <Box sx={{paddingRight:'8px'}}>
+              <Button sx={buttonClasss} onClick={copyCode}>Copy</Button>
+              
+              <Button sx={buttonClasss} onClick={pasteCode}>Paste</Button>
+            </Box>
+          </Box>
           <Editor/>
           <Button 
             disabled={selectedQueryNam.length==0}
