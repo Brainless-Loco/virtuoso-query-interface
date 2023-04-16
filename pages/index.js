@@ -58,12 +58,20 @@ export default function Home() {
     const cols = response.data.data.head.vars
     const bindings = response.data.data.results.bindings
     
+    const checkLinkValidity = (link)=>{
+      try {
+        new URL(link);
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+
     // // Process the columns
     const tempCols = [{field: 'id', headerName: 'ID',  minWidth: 100,flex:0.1}]
     cols.map(item => {
       tempCols.push({field: item, headerName: item,renderCell: (params) => {
-        // Check if the cell value is a valid URL
-        const isLink = params.value.includes('#');
+        const isLink = checkLinkValidity(params.value);
         if (isLink) {
           return (
             <a href={params.value} style={{color:'#020499'}} title={params.value} target="_blank" rel="noopener noreferrer">
@@ -76,7 +84,6 @@ export default function Home() {
       },  minWidth: 330, flex: 1})
     });
     updateColumns(tempCols)
-
     // // Process the Rows
     const tempRows = []
     bindings.map((item, idx) => {
@@ -84,8 +91,6 @@ export default function Home() {
         tempCols.map((c, index) => {
             if(index>0){
               obj = {...obj, [c.field]: item[c.field].value}
-              // console.log(item[c.field].value.includes('#'))
-              // console.log(<a href={item[c.field].value} target='_blank'>item[c.field].value</a>)
             }
         })
         tempRows.push(obj)
