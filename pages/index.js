@@ -14,6 +14,8 @@ import {useEffect} from 'react'
 
 import {setColumn, setResponseTime, setRows, updateHandleOpenStatus, updateLoadingTStatus, updateSavedQueryList, updateTheManualSparqlCode } from '@/redux/actions/Actions';
 import ModalViewComponent from '@/components/homeComponent/ModalViewComponent';
+import Link from 'next/link';
+import { Router } from 'next/router';
 
 
 export default function Home() {
@@ -113,7 +115,7 @@ export default function Home() {
 
 
   const buttonClasss = {
-    backgroundColor:'#1d274f',color:'white',marginLeft:'40px',borderRadius:'5px',overflow:'hidden',paddingX:'25px',
+    backgroundColor:'#1d274f',color:'white',marginLeft:'20px',borderRadius:'5px',overflow:'hidden',paddingX:'25px',
     border:'2px solid transparent',fontWeight:'400',
     '&:hover': 
       {
@@ -137,6 +139,9 @@ export default function Home() {
             
             <QueryListDropDown/>
             <Box sx={{paddingRight:'8px'}}>
+              <Link href="/insertQuery">
+                <Button sx={buttonClasss}>Save New</Button>
+              </Link>
               <Button sx={buttonClasss} onClick={copyCode}>Copy</Button>
               
               <Button sx={buttonClasss} onClick={pasteCode}>Paste</Button>
