@@ -61,7 +61,19 @@ export default function Home() {
     // // Process the columns
     const tempCols = [{field: 'id', headerName: 'ID',  minWidth: 100,flex:0.1}]
     cols.map(item => {
-      tempCols.push({field: item, headerName: item,  minWidth: 330, flex: 1})
+      tempCols.push({field: item, headerName: item,renderCell: (params) => {
+        // Check if the cell value is a valid URL
+        const isLink = params.value.includes('#');
+        if (isLink) {
+          return (
+            <a href={params.value} style={{color:'#020499'}} title={params.value} target="_blank" rel="noopener noreferrer">
+              {params.value}
+            </a>
+          );
+        } else {
+          return <span>{params.value}</span>;
+        }
+      },  minWidth: 330, flex: 1})
     });
     updateColumns(tempCols)
 
@@ -70,8 +82,11 @@ export default function Home() {
     bindings.map((item, idx) => {
         let obj = {id: idx}
         tempCols.map((c, index) => {
-            if(index>0)
+            if(index>0){
               obj = {...obj, [c.field]: item[c.field].value}
+              // console.log(item[c.field].value.includes('#'))
+              // console.log(<a href={item[c.field].value} target='_blank'>item[c.field].value</a>)
+            }
         })
         tempRows.push(obj)
     });
