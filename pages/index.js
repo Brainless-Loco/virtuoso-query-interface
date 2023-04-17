@@ -34,7 +34,6 @@ export default function Home() {
   const updateRows = (rows)=> dispach(setRows(rows))
   const updateColumns = (columns)=> dispach(setColumn(columns))
   const updateSelectedQuery = (queryName) => dispach(updateSelectedQuery(queryName))
-  const updateAllSavedQueryList = (list)=> dispach(updateSavedQueryList(list))
   const updateSparqlCodeFromClipboard = (code)=>dispach(updateTheManualSparqlCode(code))
   
 
@@ -97,22 +96,6 @@ export default function Home() {
     updateRows(tempRows)
     updateLoadingStatus()
   }
-  
-  // Firebase Works
-  const dbInstances = collection(database, 'savedQueries');
-  
-  useEffect(() => {
-    const GetQueries = ()=>{
-      getDocs(dbInstances)
-      .then((data) => {
-          const queriesArray = data.docs.map((item) => {
-              return { ...item.data(), id: item.id }
-          });
-          updateAllSavedQueryList(queriesArray)
-      })
-    }
-    GetQueries()
-  }, [])
 
   const copyCode = async () => {
     try {
@@ -153,7 +136,7 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
           <Menubar title="Virtuoso Query Interface"/>
-          <Box sx={{width:'100%',padding:'8px',height:'auto',overflow:'hidden',display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
+          <Box sx={{width:'100%',padding:'8px',height:'auto',overflow:'hidden',display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
             
             <QueryListDropDown/>
             <Box sx={{paddingRight:'8px'}}>
