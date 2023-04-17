@@ -6,7 +6,7 @@ import Menubar from '@/components/Menubar';
 import { Editor } from '@monaco-editor/react';
 import {useState} from 'react'
 import Head from 'next/head';
-import {database} from '../firebaseConfig'
+import {database} from '../../firebaseConfig'
 import { collection, addDoc } from 'firebase/firestore/lite';
 import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';

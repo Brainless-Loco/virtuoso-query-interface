@@ -5,7 +5,7 @@ import Head from 'next/head';
 import Box from '@mui/material/Box';
 import Menubar from '@/components/Menubar';
 import Button from '@mui/material/Button';
-import {database} from '../firebaseConfig'
+import {database} from '../../firebaseConfig'
 import { addDoc, collection, getDocs } from 'firebase/firestore/lite';
 import {useEffect} from 'react'
 import { Editor } from '@monaco-editor/react';
@@ -18,7 +18,6 @@ const MyFormComponent = () => {
   const [editorValue, seteditorValue] = useState('#Write your SPARQL Code Here')
 
   const handleDatasetOptionChange = (event, value) => {
-    console.log(value)
     setdatasetName(value);
   };
   const handleChangeOfDatasetName = (event)=>{
