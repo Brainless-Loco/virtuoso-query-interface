@@ -1,49 +1,87 @@
 import FormControl  from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
-import Box from '@mui/material/Box';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSelectedQuery } from '@/redux/actions/Actions';
+import { updateDatasetList, updateQueryNameList, updateSavedQueryList, updateSelectedDatasetName, updateSelectedQuery } from '@/redux/actions/Actions';
+import { Autocomplete, TextField } from '@mui/material';
+import {database} from '../../firebaseConfig'
+import { collection, getDocs } from 'firebase/firestore/lite';
+
 
 export default function QueryListDropDown() {
   
   const dispatch = useDispatch()
 
-  var nameList = useSelector(state=>state.queries)
+  const datasetNameList = useSelector(state=>state.datasetNames)
+  const selectedDataset = useSelector(state=>state.selectedDataset)
+  const queryNameList = useSelector(state=>state.queryNameList)
+
 
   const updateSelectedQueryInfo = (name)=>dispatch(updateSelectedQuery(name))
+  const updateTheSelectedDatasetName = (name)=>dispatch(updateSelectedDatasetName(name))
+  const updateTheDatasetList = (list)=>dispatch(updateDatasetList(list))
+  const updateAllSavedQueryList = (list)=> dispatch(updateSavedQueryList(list))
+  const updateTheQueryNameList = (list)=> dispatch(updateQueryNameList(list))
 
-  if(nameList.length>0){  
-    nameList = nameList.map((item)=>{
-      return item.name
-    })
+  const handleQueryNameChange = (event,value)=>{
+    if(value!=null && value.length>0) updateSelectedQueryInfo(value)
   }
 
-  const handleChange = (event)=>{
-    const newValue = event.target.value;
-    updateSelectedQueryInfo(newValue)
-  }
+  const handleDatasetOptionChange = (event, value) => {
+    updateTheSelectedDatasetName(value)
+    if(value!=null && value.length>0){
+      const queryList = collection(database,value);
+      getDocs(queryList)
+      .then((data) => {
+          var queriesArray = data.docs.map((item) => {
+              return { ...item.data(), id: item.id }
+          });
+          updateAllSavedQueryList(queriesArray)
+          queriesArray  = queriesArray.map(item=>item.name)
+          updateTheQueryNameList(queriesArray)
+      })
+    }
+  };
+
+  
+  // Firebase Works
+  const collectionOfDatasetCollectionList = collection(database, 'Dataset Name List');
+
+  useEffect(() => {
+    const GetDatasetNames = ()=>{
+      getDocs(collectionOfDatasetCollectionList)
+      .then((data) => {
+          var tempDatasetNameList = data.docs.map((item) => {
+              return { ...item.data()}
+          });
+          tempDatasetNameList = tempDatasetNameList.map((item)=> item.name)
+          updateTheDatasetList(tempDatasetNameList)
+      })
+    }
+    GetDatasetNames()
+  }, [])
 
 
 
   return (
-        <FormControl sx={{width:'50%',height:'50px',display:'flex',justifyContent:'center'}}>
-            <InputLabel id="demo-simple-select-label" sx={{background:'white'}}>Select a Query Type &nbsp;</InputLabel>
-            <Select
-                labelId="query-type-selection"
-                id="query-type-select"
-                label="query-type"
-                onChange={handleChange}
-            >
-              <MenuItem value={"newManualSparql"} key={"newManualSparql"}>A New Query</MenuItem>
-              {
-                nameList.map((item)=>{
-                  return <MenuItem key={item} value={item}>{item}</MenuItem>
-                })
-              }
-            </Select>
+        <FormControl sx={{width:'70%',height:'50px',display:'flex',justifyContent:'space-between',flexDirection:'row',marginBottom:'8px' }}>
+          
+          <Autocomplete
+           sx={{width:'49.5%'}}
+            options={datasetNameList}
+            onChange={handleDatasetOptionChange}
+            renderInput={(params) => (
+              <TextField {...params} label="Select a Dataset" />
+            )}
+          />
+          <Autocomplete
+            disabled={selectedDataset==null || selectedDataset.length==0}
+            sx={{width:'49.5%'}}
+            onChange={handleQueryNameChange}
+            options={queryNameList}
+            renderInput={(params) => (
+              <TextField {...params} label="Select a Query" />
+            )}
+          />
         </FormControl>
   )
 }

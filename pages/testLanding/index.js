@@ -8,7 +8,7 @@ import Editor from '@/components/homeComponent/EditorComponent';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import {database} from '../firebaseConfig'
+import {database} from '../../firebaseConfig'
 import { collection, getDocs } from 'firebase/firestore/lite';
 import {useEffect} from 'react'
 import {setColumn, setResponseTime, setRows, updateHandleOpenStatus, updateLoadingTStatus, updateSavedQueryList, updateTheManualSparqlCode } from '@/redux/actions/Actions';

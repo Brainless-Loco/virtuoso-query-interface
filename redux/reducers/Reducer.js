@@ -1,4 +1,4 @@
-import { UPDATE_LOADING_TIME, UPDATE_HANDLE_OPEN_STATE, SET_ROWS, SET_DATA, SET_RESPONSE_TIME, SET_COLUMNS, UPDATE_SELECTED_QUERY, UPDATE_ALL_SAVED_QUERY_LIST, UPDATE_SPARQL_WITH_NON_SELECTION_MANUALLY_WRITTEN_CODE, UPDATE_MANUAL_WRITING_STATUS } from "../Types";
+import { UPDATE_LOADING_TIME, UPDATE_HANDLE_OPEN_STATE, SET_ROWS, SET_DATA, SET_RESPONSE_TIME, SET_COLUMNS, UPDATE_SELECTED_QUERY, UPDATE_ALL_SAVED_QUERY_LIST, UPDATE_SPARQL_WITH_NON_SELECTION_MANUALLY_WRITTEN_CODE, UPDATE_MANUAL_WRITING_STATUS, UPDATE_SELECTED_DATASET_NAME, UPDATE_DATASET_LIST, UPDATE_QUERY_NAME_LIST } from "../Types";
 
 const initialState = {
     loading:false,
@@ -13,7 +13,9 @@ const initialState = {
     columns:[],
     responseTime:0,
     queries:[],
+    queryNameList:[],
     datasetNames:[],
+    selectedDataset:'',
     selectedQueryName: '',
     manualWritingState:false
 };
@@ -97,6 +99,28 @@ export default (state = initialState, action) => {
                 manualWritingState:action.value
             }
         }
+        case UPDATE_SELECTED_DATASET_NAME:{
+            return{
+                ...state,
+                selectedDataset:action.name
+            }
+        }
+
+        case UPDATE_DATASET_LIST:{
+            return{
+                ...state,
+                datasetNames:action.list
+            }
+        }
+        
+        case UPDATE_QUERY_NAME_LIST:{
+            return{
+                ...state,
+                queryNameList:action.list
+            }
+        }
+
+
 
 
 
