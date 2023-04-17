@@ -13,6 +13,7 @@ const initialState = {
     columns:[],
     responseTime:0,
     queries:[],
+    datasetNames:[],
     selectedQueryName: '',
     manualWritingState:false
 };
