@@ -1,7 +1,7 @@
 # Welcome to Virtuoso Query Interface
 This project has the intention to provide a online web based query interface for Virtuoso. Till now, you can only save queries with a name and run query and see the result with the response time of virtuoso.
 
-> **Used Technologies:**
+## **Used Technologies:**
 -  [Next.js](https://nextjs.org/) 
 Probably everyone is aware of this great and trending framework of Javascript. Next.js is an open-source web development framework created by the private company Vercel providing React-based web applications with server-side rendering and static website generation.
 - [Redux](https://redux.js.org/)
@@ -9,7 +9,7 @@ Great tool to manage states and actions among components.Redux is an open-source
 - [Firebase](https://firebase.google.com/)
 Firebase is a set of backend cloud computing services and application development platforms provided by Google.
 
-> **Run the application locally:**
+## **Run the application locally:**
 1. You must have [Node.js](https://nodejs.org/en) installed in your local machine that is your computer/laptop.
 2. Download the full source code into your local machine or you can clone it by running\
 &nbsp;
@@ -29,7 +29,7 @@ which will start the server at port (default) at http://localhost:3000. Go to th
 7. You can also save a query with a name from the address http://localhost:3000/insertQuery.\ 
 &nbsp;
 
-> **Others Way to Run**
+##  **Others Way to Run**
 
 1. Currently you can use the project  only locally to run  any query and get the result from virtuoso.
 2. However, you can always see the preview of the project from the following addresses:
@@ -39,7 +39,7 @@ which will start the server at port (default) at http://localhost:3000. Go to th
 		* Vercel Environment
 3. Obviously you can put 	`/insertQuery` after the default address to have the save query interface.
 
-> **Usage**
+## **Usage**
 
 1. From the landing page, you can run a previously saved query. For that:
 	*  Search and select a ***Dataset*** from the Dataset Selection Menu.
